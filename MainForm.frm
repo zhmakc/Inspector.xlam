@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} MainForm 
    Caption         =   "Инспектор"
-   ClientHeight    =   3420
+   ClientHeight    =   3424
    ClientLeft      =   64
    ClientTop       =   168
    ClientWidth     =   5704

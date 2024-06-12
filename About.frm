@@ -15,9 +15,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-Private Sub CheckBox1_Click()
-End Sub
-
 Function Subscr(yes As Boolean)
 If Not GetSetting(MyAppName, "Settings", "SubscriptionMail", True) = yes Or GetSetting(MyAppName, "Settings", "FirstRun", True) = True Then
     Dim OutApp As Object
@@ -54,10 +51,6 @@ MsgBox ("в разработке")
 '   Shell "explorer \\liebherr.i\lru\odinzovo\EMT Service\Справочник сервисного инженера\Бланки_Акты_Протоколы\Бланки тех отчетов ЕМТ MIN\", vbNormalFocus
 End Sub
 
-
-Private Sub Label1_Click()
-
-End Sub
 
 Private Sub MailTo_Click()
 'ThisWorkbook.SendMail "Maxim Shguljov"

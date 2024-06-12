@@ -138,43 +138,6 @@ End Sub
 
 '- выше с сайта https://www.cyberforum.ru/vba/thread3168926-page2.html
 
-Private Const CF_HDROP As Long = 15
-
-Public Function GetFiles(ByRef fileCount As Long) As String()
-    Dim hDrop As Long, i As Long
-    Dim aFiles() As String, sFileName As String * 1024
-
-    fileCount = 0
-
-    If Not CBool(IsClipboardFormatAvailable(CF_HDROP)) Then Exit Function
-    If Not CBool(OpenClipboard(0&)) Then Exit Function
-
-    hDrop = GetClipboardData(CF_HDROP)
-    If Not CBool(hDrop) Then GoTo done
-
-    fileCount = DragQueryFile(hDrop, -1, vbNullString, 0)
-
-    ReDim aFiles(fileCount - 1)
-    For i = 0 To fileCount - 1
-        DragQueryFile hDrop, i, sFileName, Len(sFileName)
-        aFiles(i) = Left$(sFileName, InStr(sFileName, vbNullChar) - 1)
-    Next
-    GetFiles = aFiles
-done:
-    CloseClipboard
-End Function
-Sub wibble()
-    Dim a() As String, fileCount As Long, i As Long
-    a = GetFiles(fileCount)
-    If (fileCount = 0) Then
-        MsgBox "no files"
-    Else
-        For i = 0 To fileCount - 1
-            MsgBox "found " & a(i)
-        Next
-    End If
-End Sub
-
 Public Function SheetByCodename(ByRef WB As Workbook, ByVal Codename$) As Worksheet
 'функция находит и возвращает лист по заданному кодовому имени
     On Error Resume Next: Dim sh As Worksheet
