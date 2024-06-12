@@ -1,0 +1,49 @@
+﻿Option Explicit
+'
+'Автор: Жгулёв Максим
+'Почта: Maxim.Shguljov@liebherr.com
+'
+
+Private Sub Workbook_BeforeClose(Cancel As Boolean) 'Мера борьбы с зависанием MRA
+On Error Resume Next
+'MsgBox (123)
+Application.Workbooks(MeWbName).Save
+'Application.Workbooks(MeWbName).Close
+End Sub
+
+Private Sub Workbook_Open()
+MeWbName = ThisWorkbook.Name
+MeWbPath = ThisWorkbook.Path
+'Проверка подключения
+    If VBA.Environ$("APPDATA") & "\Microsoft\AddIns\" & MeWbName = ThisWorkbook.FullName Then Exit Sub ' пропускаем добавление надстройки
+    If MsgBox("Установить надстройку Inspector версии " & Ver & "?", vbOKCancel) = vbCancel Then Exit Sub
+        'установка аддина
+    'добавляем в доверенные
+    Set WshShell = CreateObject("WScript.Shell")
+    Dim Key As Variant
+    Key = "HKEY_CURRENT_USER\Software\Microsoft\Office\" & Application.Version & "\Excel\Security\Trusted Locations\Addin\Path"
+    WshShell.RegWrite Key, VBA.Environ$("APPDATA") & "\Microsoft\AddIns\", "REG_SZ"
+    'настраиваем Excel
+    Key = "HKEY_CURRENT_USER\Software\Microsoft\Office\" & Application.Version & "\Excel\Options\DisableBootToOfficeStart"
+    WshShell.RegWrite Key, 1, "REG_DWORD"
+    'копируем файл
+    If Not Dir(VBA.Environ$("APPDATA") & "\Microsoft\AddIns\Inspector.xlam", 0) = "" Then
+    On Error Resume Next
+    Application.Workbooks("Inspector.xlam").Close
+    On Error GoTo 0
+    Kill VBA.Environ$("APPDATA") & "\Microsoft\AddIns\Inspector.xlam"
+    End If
+    CreateObject("Scripting.FileSystemObject").GetFile(ThisWorkbook.FullName).Copy VBA.Environ$("APPDATA") & "\Microsoft\AddIns\Inspector.xlam"
+    'НЕ подключаем надстройку
+        'Set WshShell = CreateObject("WScript.Shell")
+        'Key = "HKEY_CURRENT_USER\Software\Microsoft\Office\" & Application.Version & "\Excel\Options\Open"
+        'WshShell.RegWrite Key, """" & "Inspector.xlam" & """", "REG_SZ"
+    'финиш
+    Update_Excel_OfficeUI_file 'добавляем ярлык на панель быстрого запуска
+    MsgBox ("Установка завершена! Нужно перезапустить Excel!" & vbNewLine & vbNewLine & "Ярлык для запуска появится на панели быстрого доступа" & vbNewLine & "в верхнем левом углу Excel")
+    SaveSetting MyAppName, "Settings", "Subscription", True
+    SaveSetting MyAppName, "Settings", "FirstRun", True
+    About.Show (1)
+    Application.Workbooks(MeWbName).Close
+1:
+End Sub
